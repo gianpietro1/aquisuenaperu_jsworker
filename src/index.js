@@ -2,12 +2,12 @@ const ws = require('ws');
 const { randomUUID } = require('crypto');
 require('dotenv').config();
 const axios = require('axios');
-const { gql } = require('@urql/core');
 const {
+  gql,
   createClient,
   defaultExchanges,
   subscriptionExchange,
-} = require('urql');
+} = require('@urql/core');
 const { createClient: createWSClient } = require('graphql-ws');
 const { pipe, subscribe } = require('wonka');
 
