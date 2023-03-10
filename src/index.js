@@ -96,8 +96,8 @@ track {
 const putTrack = async (track, asp_token) => {
   const json = JSON.stringify({ currentTrack: track });
   await axios.put(
-    // `https://aquisuenaperu.com/api/site/${SITE}?updateType=nowPlaying`,
-    `http://localhost:3002/api/site/${SITE}?updateType=nowPlaying`,
+    `https://aquisuenaperu.com/api/site/${SITE}?updateType=nowPlaying`,
+    // `http://localhost:3002/api/site/${SITE}?updateType=nowPlaying`,
     json,
     {
       headers: {
