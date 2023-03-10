@@ -1,7 +1,11 @@
-FROM node:alpine
+FROM node:alpine AS build
 WORKDIR /app
 COPY package.json ./
 COPY package-lock.json ./
 COPY ./ ./
-RUN npm i
+RUN npm install
+
+FROM gcr.io/distroless/nodejs:16
+COPY --from=build /app /app
+WORKDIR /app
 CMD ["node", "src/index.js"]
