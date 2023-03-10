@@ -1,5 +1,5 @@
 const ws = require('ws');
-const { randomUUID } = require('node:crypto');
+const { randomUUID } = require('crypto');
 require('dotenv').config();
 const axios = require('axios');
 const { gql } = require('@urql/core');
