@@ -1,0 +1,11 @@
+version: '3'
+services:
+  aquisuenaperu_jsworker:
+    image: 'aquisuenaperu_jsworker:latest'
+    restart: unless-stopped
+    container_name: asp_jsworker_$SITE
+    env_file: .env
+
+networks:
+  default:
+    name: proxynet
