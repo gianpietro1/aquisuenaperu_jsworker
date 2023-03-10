@@ -8,4 +8,4 @@ RUN npm install
 FROM gcr.io/distroless/nodejs:16
 COPY --from=build /app /app
 WORKDIR /app
-CMD ["node", "src/index.js"]
+CMD ["src/index.js"]
