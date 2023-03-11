@@ -95,18 +95,22 @@ track {
 
 const putTrack = async (track, asp_token) => {
   const json = JSON.stringify({ currentTrack: track });
-  await axios.put(
-    `https://aquisuenaperu.com/api/site/${SITE}?updateType=nowPlaying`,
-    // `http://localhost:3002/api/site/${SITE}?updateType=nowPlaying`,
-    json,
-    {
-      headers: {
-        accept: 'application/json',
-        'Content-Type': 'application/json',
-        'x-access-token': asp_token,
+  await axios
+    .put(
+      `https://aquisuenaperu.com/api/site/${SITE}?updateType=nowPlaying`,
+      // `http://localhost:3002/api/site/${SITE}?updateType=nowPlaying`,
+      json,
+      {
+        headers: {
+          accept: 'application/json',
+          'Content-Type': 'application/json',
+          'x-access-token': asp_token,
+        },
       },
-    },
-  );
+    )
+    .catch((e) => {
+      throw new Error(e.response.data);
+    });
 };
 
 const getSYBNP = async (asp_token, sybToken) => {
@@ -156,16 +160,31 @@ const subscribeSYB = async (asp_token, sybToken, sybRefreshToken) => {
     ],
   });
 
+  let new_asp_token = asp_token;
+
   const { unsubscribe } = pipe(
     client.subscription(subscription),
-    subscribe((result) => {
+    subscribe(async (result) => {
       if (result.data.nowPlayingUpdate) {
         let track = result.data.nowPlayingUpdate.nowPlaying.track;
         console.log('subscription track', track);
         if (track) {
-          putTrack(track, asp_token);
+          try {
+            await putTrack(track, new_asp_token);
+          } catch (e) {
+            console.log('ERROR', e);
+            // try with new token
+            const aspTokenReponse = await axios.post(
+              'https://aquisuenaperu.com/api/login',
+              // 'http://localhost:3002/api/login',
+              tokenASPJSON,
+              {},
+            );
+            new_asp_token = aspTokenReponse.data.token;
+            putTrack(track, new_asp_token);
+          }
         }
-        // TODO: refreshToken (WSS is not authenticated today)
+        // TODO: sybRefreshToken (WSS is not authenticated today)
       }
     }),
   );
@@ -174,6 +193,7 @@ const subscribeSYB = async (asp_token, sybToken, sybRefreshToken) => {
 const getNPandUpdate = async () => {
   const aspTokenReponse = await axios.post(
     'https://aquisuenaperu.com/api/login',
+    // 'http://localhost:3002/api/login',
     tokenASPJSON,
     {},
   );
